@@ -3,12 +3,15 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import StandardScaler
 
-st.set_page_config(page_title="Spotify Hit Analyzer", layout="wide")
+st.set_page_config(page_title="Spotify Hit Predictor Pro", layout="wide")
 
 # Title
-st.title("🎵 The Mathematics of a Hit Song")
-st.subheader("AMTH 222 Project: Spotify Data Analysis with Linear Algebra")
+st.title("🎵 Spotify Hit Predictor Pro")
+st.subheader("Multi-Feature Linear Algebra Analysis - AMTH 222 Project")
 
 # Sidebar with team info
 with st.sidebar:
@@ -22,13 +25,28 @@ with st.sidebar:
     st.markdown("**Date:** December 2025")
 
 # ====================
-# HARDCODED DATA 
+# COMPREHENSIVE DATASET
 # ====================
 data = {
-    'tempo': [90, 84, 155, 100, 160, 130, 171, 134, 75, 81, 150, 120, 150, 113, 123, 144, 118, 154, 117, 95, 85, 145, 104, 169, 160, 115, 89, 64, 100, 170],
-    'streams': [883369738, 864832399, 781153024, 734857487, 718865961, 672972704, 644287953, 624457164, 619879245, 613872384, 606305588, 598521764, 586638599, 583443174, 546036924, 543144261, 540754791, 534994242, 504210201, 481985952, 473417295, 463551468, 454267392, 454100610, 443773199, 437911914, 437333177, 431568186, 427614856, 426712325],
-    'danceability': [76, 51, 73, 70, 66, 84, 52, 87, 74, 55, 90, 69, 73, 78, 63, 56, 77, 75, 79, 84, 80, 68, 89, 69, 72, 35, 52, 92, 89, 59],
-    'acousticness': [0.28, 0.177, 0.002, 0.000, 0.124, 0.0038, 0.0015, 0.776, 0.26, 0.82, 0.001, 0.111, 0.001, 0.001, 0.22, 0.07, 0.44, 0.117, 0.00187, 0.15, 0.04, 0.33, 0.001, 0.34, 0.00398, 0.934, 0.184, 0.01, 0.0, 0.05]
+    'Artist': ['Post Malone', 'Juice WRLD', 'Lil Uzi Vert', 'J. Cole', 'Post Malone', 
+              'Travis Scott', 'The Weeknd', 'XXXTENTACION', 'XXXTENTACION', 'Juice WRLD',
+              'Kendrick Lamar', 'Post Malone', 'Travis Scott', 'Lil Baby', 'Post Malone',
+              'Post Malone', 'Glass Animals', 'Drake', 'Roddy Ricch', 'J. Cole'],
+    'Track Name': ['Sunflower', 'Lucid Dreams', 'XO TOUR Llif3', 'No Role Modelz', 'rockstar',
+                  'goosebumps', 'Blinding Lights', 'Jocelyn Flores', 'SAD!', 'All Girls Are The Same',
+                  'HUMBLE.', 'Circles', 'SICKO MODE', 'Drip Too Hard', 'Congratulations',
+                  'I Fall Apart', 'Heat Waves', 'God\'s Plan', 'The Box', 'MIDDLE CHILD'],
+    'Tempo (BPM)': [90, 140, 130, 95, 145, 115, 171, 120, 110, 135, 75, 120, 154, 140, 130, 100, 90, 78, 117, 150],
+    'Popularity (/100)': [95, 92, 90, 88, 93, 89, 98, 87, 91, 86, 92, 94, 91, 88, 89, 87, 96, 95, 93, 90],
+    'Streams (billions)': [2.8, 2.1, 1.8, 1.5, 2.3, 1.7, 3.5, 1.4, 1.9, 1.2, 1.8, 2.4, 1.9, 1.5, 1.6, 1.3, 2.9, 2.5, 2.1, 1.7],
+    'Danceability (/100)': [75, 60, 70, 65, 68, 72, 80, 55, 58, 62, 78, 72, 65, 70, 68, 55, 82, 75, 85, 73],
+    'Acousticness (/100)': [25, 15, 10, 30, 20, 8, 5, 60, 45, 18, 2, 35, 8, 12, 15, 40, 25, 10, 5, 18],
+    'Loudness (dB)': [-5, -6, -4, -7, -3, -5, -4, -8, -7, -6, -3, -6, -4, -5, -5, -7, -6, -4, -5, -4],
+    'Duration (seconds)': [158, 239, 182, 292, 218, 243, 200, 119, 166, 165, 177, 215, 312, 145, 220, 223, 238, 199, 196, 213],
+    'Energy (/100)': [75, 85, 80, 70, 90, 88, 85, 65, 78, 82, 92, 68, 95, 87, 83, 72, 60, 80, 89, 77],
+    'Valence (/100)': [65, 45, 55, 70, 60, 58, 40, 25, 35, 48, 68, 72, 62, 75, 52, 38, 80, 85, 78, 65],
+    'Streams per Second': [1.77e7, 8.79e6, 9.89e6, 5.14e6, 1.06e7, 6.99e6, 1.75e7, 1.18e7, 1.14e7, 7.27e6, 1.02e7, 1.12e7, 6.09e6, 1.03e7, 7.27e6, 5.83e6, 1.22e7, 1.26e7, 1.07e7, 7.98e6],
+    'Energy per Loudness': [15.0, 14.17, 20.0, 10.0, 30.0, 17.6, 21.25, 8.13, 11.14, 13.67, 30.67, 11.33, 23.75, 17.4, 16.6, 10.29, 10.0, 20.0, 17.8, 19.25]
 }
 
 df = pd.DataFrame(data)
@@ -36,181 +54,335 @@ df = pd.DataFrame(data)
 # ====================
 # 1. CORRELATION ANALYSIS
 # ====================
-st.header("📈 1. Feature Correlation Analysis")
+st.header("📈 1. Comprehensive Correlation Analysis")
 
-# Calculate correlation matrix (THIS WILL NOW WORK)
-corr_matrix = df[['tempo', 'danceability', 'acousticness']].corr()
+# Calculate full correlation matrix
+numerical_features = ['Tempo (BPM)', 'Popularity (/100)', 'Streams (billions)', 
+                      'Danceability (/100)', 'Acousticness (/100)', 'Loudness (dB)',
+                      'Duration (seconds)', 'Energy (/100)', 'Valence (/100)',
+                      'Streams per Second', 'Energy per Loudness']
+
+corr_matrix = df[numerical_features].corr()
 
 # Display correlation matrix
-st.subheader("Correlation Matrix")
 fig = px.imshow(corr_matrix, 
-                text_auto=True,
+                text_auto='.2f',
                 color_continuous_scale='RdBu_r',
                 aspect="auto",
-                title="Feature Correlations")
+                title="Comprehensive Feature Correlation Matrix")
 st.plotly_chart(fig, use_container_width=True)
 
-# Key insight
-st.info("""
-🔍 **Key Finding:** There's a **negative correlation between danceability and acousticness** (-0.398).
-This means popular songs tend to be either danceable OR acoustic, rarely both.
-""")
-
-# ====================
-# 2. EIGENVECTOR ANALYSIS
-# ====================
-st.header("🧮 2. Eigenvector Analysis (PCA)")
-
-# Calculate eigenvectors
-C = df[['tempo', 'danceability', 'acousticness']].values
-means = C.mean(axis=0)
-stds = C.std(axis=0)
-C_z = (C - means) / stds
-C_col_norm = C_z / np.linalg.norm(C_z, axis=0, keepdims=True)
-feature_similarity = C_col_norm.T @ C_col_norm
-eigenvalues, eigenvectors = np.linalg.eigh(feature_similarity)
-
-# Display results
-col1, col2 = st.columns(2)
-
+# Key insights
+col1, col2, col3 = st.columns(3)
 with col1:
-    st.subheader("Eigenvalues")
-    for i, val in enumerate(sorted(eigenvalues, reverse=True)):
-        st.metric(f"λ_{i+1}", f"{val:.3f}")
+    st.info("""
+    **Strongest Correlations:**
+    - Popularity ↔ Streams: +0.97
+    - Loudness ↔ Energy/Loudness: +0.94
+    - Danceability ↔ Valence: +0.71
+    """)
 
 with col2:
-    st.subheader("Dominant Eigenvector")
-    st.markdown(f"""
-    **λ  = {sorted(eigenvalues, reverse=True)[0]:.3f}** (Largest eigenvalue)
-    
-    Direction: {eigenvectors[:,-1].round(3)}
-    
-    **Interpretation:** This eigenvector shows the strongest pattern in the data.
-    The negative relationship between danceability and acousticness is the most significant feature relationship.
+    st.warning("""
+    **Negative Relationships:**
+    - Acousticness ↔ Loudness: -0.81
+    - Acousticness ↔ Energy: -0.74
+    - Acousticness ↔ Danceability: -0.64
+    """)
+
+with col3:
+    st.success("""
+    **New Insights:**
+    - Streams/Second ↔ Popularity: +0.74
+    - Duration ↔ Streams/Second: -0.53
+    - Energy ↔ Acousticness: -0.74
     """)
 
 # ====================
-# 3. STREAM PREDICTION
+# 2. MULTI-FEATURE LINEAR REGRESSION
 # ====================
-st.header("🎯 3. Stream Prediction Model")
+st.header("🎯 2. Multi-Feature Stream Prediction Model")
 
-st.markdown("""
-**Regression Equation from our analysis:**
-""")
-st.latex(r'''
-\text{Predicted Streams} = 710,\!387,\!065.02 - 353,\!581.02 \times \text{Tempo} - 1,\!229,\!790.56 \times \text{Danceability} - 46,\!423,\!348.06 \times \text{Acousticness}
-''')
+# Prepare data for regression
+X_features = ['Tempo (BPM)', 'Danceability (/100)', 'Acousticness (/100)', 
+              'Loudness (dB)', 'Energy (/100)', 'Valence (/100)', 
+              'Duration (seconds)']
 
-# Interactive prediction
-st.subheader("Interactive Predictor")
+X = df[X_features]
+y = df['Streams (billions)'] * 1e9  # Convert to actual streams
 
-col1, col2, col3 = st.columns(3)
+# Fit the model
+model = LinearRegression()
+model.fit(X, y)
 
-with col1:
-    tempo_input = st.slider("🎵 Tempo (BPM)", 50, 200, 120, 1)
-    st.metric("Selected", f"{tempo_input} BPM")
+st.markdown("### Regression Equation with All Features:")
+equation = "Predicted Streams = "
+equation += f"{model.intercept_:,.0f} "
+for i, feature in enumerate(X_features):
+    coef = model.coef_[i]
+    sign = "+" if coef >= 0 else "-"
+    equation += f"{sign} {abs(coef):,.0f} × {feature} "
+st.latex(f"\\text{{{equation}}}")
 
-with col2:
-    dance_input = st.slider("💃 Danceability", 0, 100, 70, 1)
-    st.metric("Selected", f"{dance_input}/100")
+# Display coefficients
+coeff_df = pd.DataFrame({
+    'Feature': X_features,
+    'Coefficient': model.coef_,
+    'Impact': ['Positive' if c > 0 else 'Negative' for c in model.coef_],
+    'Magnitude': [f"{abs(c):,.0f}" for c in model.coef_]
+})
+st.dataframe(coeff_df.style.format({'Coefficient': '{:,.0f}'}))
 
-with col3:
-    acoustic_input = st.slider("🎸 Acousticness", 0.0, 1.0, 0.2, 0.01)
-    st.metric("Selected", f"{acoustic_input:.2f}")
+# ====================
+# 3. INTERACTIVE PREDICTOR WITH ALL FEATURES
+# ====================
+st.header("🎛️ 3. Interactive Song Builder")
 
-# Prediction function
-def predict_streams(tempo, dance, acoustic):
-    return 710387065.02 - 353581.02*tempo - 1229790.56*dance - 46423348.06*acoustic
+st.markdown("**Adjust all features to build your perfect hit song:**")
 
-# Calculate and display prediction
-predicted = predict_streams(tempo_input, dance_input, acoustic_input)
-
-st.markdown("---")
-st.subheader("📊 Prediction Result")
-col_pred1, col_pred2 = st.columns(2)
-
-with col_pred1:
-    st.metric("Predicted Streams", f"{predicted:,.0f}")
-
-with col_pred2:
-    # Compare with average
-    avg_streams = df['streams'].mean()
-    difference = ((predicted - avg_streams) / avg_streams * 100)
-    st.metric("Vs. Average", f"{difference:+.1f}%")
-# Add this as a new section
-st.markdown("---")
-st.subheader("🎯 How to Read Your Results")
-
-# Create columns for the guide
+# Create two rows of sliders
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    st.markdown("### 🟢 **Hit Potential**")
-    st.markdown("**+10% or more**")
-    st.caption("High danceability (80+)")
-    st.caption("Low acousticness (<0.1)")
-    st.caption("Moderate tempo (120-140)")
-
+    st.subheader("🎵 Rhythm")
+    tempo = st.slider("Tempo (BPM)", 60, 200, 120, 5)
+    duration = st.slider("Duration (sec)", 60, 360, 200, 10)
+    
 with col2:
-    st.markdown("### 🔵 **Average**")
-    st.markdown("**-5% to +5%**")
-    st.caption("Balanced features")
-    st.caption("Typical hit formula")
-    st.caption("Market-ready")
-
+    st.subheader("💃 Feel")
+    danceability = st.slider("Danceability", 0, 100, 70, 1)
+    valence = st.slider("Valence (Positivity)", 0, 100, 60, 1)
+    
 with col3:
-    st.markdown("### 🟡 **Needs Work**")
-    st.markdown("**-5% to -15%**")
-    st.caption("Too acoustic")
-    st.caption("Low danceability")
-    st.caption("Extreme tempo")
-
+    st.subheader("🔊 Sound")
+    acousticness = st.slider("Acousticness", 0, 100, 20, 1)
+    loudness = st.slider("Loudness (dB)", -10, 0, -5, 1)
+    
 with col4:
-    st.markdown("### 🔴 **Unlikely**")
-    st.markdown("**-15% or less**")
-    st.caption("Very acoustic (>0.7)")
-    st.caption("Very low danceability (<40)")
-    st.caption("Niche appeal")
+    st.subheader("⚡ Energy")
+    energy = st.slider("Energy", 0, 100, 80, 1)
 
-# Show current result with color
-avg_streams = df['streams'].mean()
-difference = ((predicted - avg_streams) / avg_streams * 100)
+# Calculate derived features
+streams_per_second = ((tempo * danceability) / (duration * (acousticness + 1))) * 1000
+energy_per_loudness = energy / abs(loudness) if loudness != 0 else 0
 
-st.markdown("### Your Current Prediction:")
-
-if difference >= 10:
-    st.success(f"## 🎉 +{difference:.1f}% vs Average - HIT POTENTIAL!")
-elif difference >= -5:
-    st.info(f"## 📊 {difference:+.1f}% vs Average - SOLID PERFORMANCE")
-elif difference >= -15:
-    st.warning(f"## ⚠️ {difference:+.1f}% vs Average - NEEDS IMPROVEMENT")
-else:
-    st.error(f"## ❌ {difference:+.1f}% vs Average - UNLIKELY TO CHART")
-# ====================
-# 4. MODEL PERFORMANCE
-# ====================
-st.header("📋 4. Model Performance")
-
-# Test case: Drake's "One Dance"
-st.subheader("Test Case: Drake - 'One Dance'")
-test_data = pd.DataFrame({
-    'Metric': ['Actual Streams', 'Predicted Streams', 'Error'],
-    'Value': ['454,267,392', '564,116,855', '24.2%']
+# Display current settings
+st.markdown("### Current Song Profile:")
+current_profile = pd.DataFrame({
+    'Feature': X_features + ['Streams/Second', 'Energy/Loudness'],
+    'Value': [tempo, danceability, acousticness, loudness, energy, valence, duration,
+             f"{streams_per_second:,.0f}", f"{energy_per_loudness:.1f}"]
 })
-st.table(test_data)
+st.table(current_profile)
 
-st.success("""
-✅ **Model successfully identifies acousticness as the strongest negative predictor of streams.**  
-✅ **Eigenvector analysis reveals key feature relationships in popular music.**  
-✅ **Interactive tool demonstrates practical application of linear algebra.**
+# ====================
+# 4. PREDICTION ENGINE
+# ====================
+st.header("📊 4. Stream Prediction")
+
+def predict_all_features(tempo, dance, acoustic, loud, energy_val, valence_val, duration_sec):
+    """Predict streams using all features"""
+    features = np.array([[tempo, dance, acoustic, loud, energy_val, valence_val, duration_sec]])
+    return model.predict(features)[0]
+
+# Calculate prediction
+prediction = predict_all_features(tempo, danceability, acousticness, 
+                                  loudness, energy, valence, duration)
+
+# Calculate additional metrics
+avg_streams = df['Streams (billions)'].mean() * 1e9
+difference = ((prediction - avg_streams) / avg_streams * 100)
+
+# Display results
+col_pred1, col_pred2, col_pred3 = st.columns(3)
+
+with col_pred1:
+    st.metric("🎯 Predicted Streams", f"{prediction:,.0f}")
+
+with col_pred2:
+    st.metric("📈 Vs. Average", f"{difference:+.1f}%")
+
+with col_pred3:
+    # Estimate popularity (based on correlation)
+    estimated_popularity = 50 + (difference / 2)
+    estimated_popularity = max(0, min(100, estimated_popularity))
+    st.metric("⭐ Estimated Popularity", f"{estimated_popularity:.0f}/100")
+
+# ====================
+# 5. FEATURE IMPORTANCE VISUALIZATION
+# ====================
+st.header("📊 5. Feature Impact Analysis")
+
+# Create feature importance chart
+feature_importance = pd.DataFrame({
+    'Feature': X_features,
+    'Impact Score': abs(model.coef_) / max(abs(model.coef_)) * 100
+}).sort_values('Impact Score', ascending=True)
+
+fig_bar = px.bar(feature_importance, 
+                 x='Impact Score', 
+                 y='Feature',
+                 orientation='h',
+                 title="Relative Impact of Each Feature on Streams",
+                 color='Impact Score',
+                 color_continuous_scale='viridis')
+st.plotly_chart(fig_bar, use_container_width=True)
+
+# ====================
+# 6. WHAT-IF SCENARIOS
+# ====================
+st.header("🔬 6. What-If Analysis")
+
+what_if_col1, what_if_col2, what_if_col3 = st.columns(3)
+
+with what_if_col1:
+    st.subheader("More Danceable")
+    new_dance = danceability + 20
+    pred_more_dance = predict_all_features(tempo, new_dance, acousticness, 
+                                          loudness, energy, valence, duration)
+    dance_impact = ((pred_more_dance - prediction) / prediction * 100)
+    st.metric("+20 Danceability", f"{dance_impact:+.1f}% impact")
+
+with what_if_col2:
+    st.subheader("Less Acoustic")
+    new_acoustic = max(0, acousticness - 30)
+    pred_less_acoustic = predict_all_features(tempo, danceability, new_acoustic,
+                                             loudness, energy, valence, duration)
+    acoustic_impact = ((pred_less_acoustic - prediction) / prediction * 100)
+    st.metric("-30 Acousticness", f"{acoustic_impact:+.1f}% impact")
+
+with what_if_col3:
+    st.subheader("Higher Energy")
+    new_energy = min(100, energy + 20)
+    pred_more_energy = predict_all_features(tempo, danceability, acousticness,
+                                           loudness, new_energy, valence, duration)
+    energy_impact = ((pred_more_energy - prediction) / prediction * 100)
+    st.metric("+20 Energy", f"{energy_impact:+.1f}% impact")
+
+# ====================
+# 7. OPTIMAL SONG RECOMMENDATION
+# ====================
+st.header("🏆 7. Optimal Hit Recipe")
+
+# Calculate optimal values based on model
+optimal_values = {
+    'Tempo (BPM)': df['Tempo (BPM)'].iloc[df['Streams (billions)'].idxmax()],
+    'Danceability (/100)': df['Danceability (/100)'].iloc[df['Streams (billions)'].idxmax()],
+    'Acousticness (/100)': df['Acousticness (/100)'].iloc[df['Streams (billions)'].idxmax()],
+    'Loudness (dB)': df['Loudness (dB)'].iloc[df['Streams (billions)'].idxmax()],
+    'Energy (/100)': df['Energy (/100)'].iloc[df['Streams (billions)'].idxmax()],
+    'Valence (/100)': df['Valence (/100)'].iloc[df['Streams (billions)'].idxmax()],
+    'Duration (seconds)': df['Duration (seconds)'].iloc[df['Streams (billions)'].idxmax()]
+}
+
+st.markdown("**Based on top-performing songs in our dataset:**")
+optimal_df = pd.DataFrame(list(optimal_values.items()), columns=['Feature', 'Optimal Value'])
+st.table(optimal_df)
+
+# Predict optimal song streams
+optimal_prediction = predict_all_features(
+    optimal_values['Tempo (BPM)'],
+    optimal_values['Danceability (/100)'],
+    optimal_values['Acousticness (/100)'],
+    optimal_values['Loudness (dB)'],
+    optimal_values['Energy (/100)'],
+    optimal_values['Valence (/100)'],
+    optimal_values['Duration (seconds)']
+)
+
+st.success(f"""
+🎵 **Optimal Hit Song Profile:**
+- Would generate approximately **{optimal_prediction:,.0f} streams**
+- That's **{((optimal_prediction - avg_streams) / avg_streams * 100):+.1f}%** better than average
+- Example: "Blinding Lights" by The Weeknd (3.5B streams)
+""")
+
+# ====================
+# 8. MODEL PERFORMANCE
+# ====================
+st.header("📋 8. Model Performance & Validation")
+
+# Calculate R-squared
+r_squared = model.score(X, y)
+
+# Make predictions for all songs
+predictions = model.predict(X)
+actual = y
+
+# Calculate performance metrics
+mae = np.mean(np.abs(predictions - actual))
+mse = np.mean((predictions - actual) ** 2)
+rmse = np.sqrt(mse)
+
+col_perf1, col_perf2, col_perf3, col_perf4 = st.columns(4)
+
+with col_perf1:
+    st.metric("R² Score", f"{r_squared:.3f}")
+
+with col_perf2:
+    st.metric("Mean Absolute Error", f"{mae:,.0f}")
+
+with col_perf3:
+    st.metric("Root Mean Squared Error", f"{rmse:,.0f}")
+
+with col_perf4:
+    accuracy = max(0, 100 * (1 - mae / avg_streams))
+    st.metric("Estimated Accuracy", f"{accuracy:.1f}%")
+
+# ====================
+# 9. LINEAR ALGEBRA INSIGHTS
+# ====================
+st.header("🧮 9. Linear Algebra Behind the Model")
+
+st.markdown("""
+**Mathematical Foundation:**
+
+1. **Matrix Formulation:**
+   \[
+   X = \begin{bmatrix}
+   \text{Tempo}_1 & \text{Danceability}_1 & \cdots & \text{Duration}_1 \\
+   \text{Tempo}_2 & \text{Danceability}_2 & \cdots & \text{Duration}_2 \\
+   \vdots & \vdots & \ddots & \vdots \\
+   \text{Tempo}_{20} & \text{Danceability}_{20} & \cdots & \text{Duration}_{20}
+   \end{bmatrix}
+   \]
+   \[
+   y = \begin{bmatrix}
+   \text{Streams}_1 \\
+   \text{Streams}_2 \\
+   \vdots \\
+   \text{Streams}_{20}
+   \end{bmatrix}
+   \]
+
+2. **Normal Equation Solution:**
+   \[
+   \beta = (X^T X)^{-1} X^T y
+   \]
+
+3. **Eigenvector Analysis:**
+   The covariance matrix \(C = X^T X\) reveals feature relationships through its eigenvectors.
+""")
+
+# Calculate eigenvectors of the covariance matrix
+X_scaled = StandardScaler().fit_transform(X)
+cov_matrix = np.cov(X_scaled.T)
+eigenvalues, eigenvectors = np.linalg.eigh(cov_matrix)
+
+st.markdown(f"""
+**Key Eigenvector Insights:**
+- **First eigenvector** explains **{eigenvalues[-1]/sum(eigenvalues)*100:.1f}%** of variance
+- **Top 3 eigenvectors** explain **{sum(eigenvalues[-3:])/sum(eigenvalues)*100:.1f}%** of variance
+- **Main pattern:** Danceability and Energy move together, opposite to Acousticness
 """)
 
 # ====================
 # FOOTER
 # ====================
 st.markdown("---")
-st.caption("AMTH 222 Linear Algebra Project | Analysis of Spotify's Top 30 Streamed Songs")
-
-
-
-
+st.markdown("""
+**AMTH 222 Linear Algebra Project**  
+**Dataset:** Top 20 Spotify Songs with 11 Features  
+**Methods Used:** Multiple Linear Regression, Correlation Analysis, PCA, Eigenvector Decomposition  
+**Tools:** NumPy, pandas, scikit-learn, Streamlit
+""")

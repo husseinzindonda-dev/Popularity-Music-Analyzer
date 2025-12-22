@@ -154,7 +154,7 @@ with col2:
 with col3:
     st.subheader("🔊 Sound")
     acousticness = st.slider("Acousticness", 0, 100, 20, 1)
-    loudness = st.slider("Loudness (dB)", -10, 0, -5, 1)
+    loudness = st.slider("Loudness (dB)", -15, 0, -5, 1)
     
 with col4:
     st.subheader("⚡ Energy")
@@ -435,6 +435,7 @@ st.markdown("""
 **Methods Used:** Multiple Linear Regression, Correlation Analysis, PCA, Eigenvector Decomposition  
 **Tools:** NumPy, pandas, scikit-learn, Streamlit
 """)
+
 
 
 

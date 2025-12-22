@@ -137,7 +137,7 @@ st.markdown("""
 # SIDEBAR - SPOTIFY STYLE
 # ====================
 with st.sidebar:
-    st.image("https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg", width=50)
+    st.image("https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg", width=auto)
     st.markdown("<h2 style='text-align: center; color: #1DB954;'>Spotify Hit Lab</h2>", unsafe_allow_html=True)
     
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
@@ -737,4 +737,5 @@ st.markdown("""
     <p style="color: #B3B3B3;"><strong>Methods:</strong> Multiple Linear Regression • Correlation Analysis • PCA • Eigenvector Decomposition</p>
 </div>
 """, unsafe_allow_html=True)
+
 

@@ -115,7 +115,7 @@ with col2:
     st.metric("Selected", f"{dance_input}/100")
 
 with col3:
-    acoustic_input = st.slider("🎸 Acousticness", 0.0, 1.0, 0.2, 0.05)
+    acoustic_input = st.slider("🎸 Acousticness", 0.0, 1.0, 0.2, 0.01)
     st.metric("Selected", f"{acoustic_input:.2f}")
 
 # Prediction function
@@ -162,5 +162,6 @@ st.success("""
 # ====================
 st.markdown("---")
 st.caption("AMTH 222 Linear Algebra Project | Analysis of Spotify's Top 30 Streamed Songs")
+
 
 

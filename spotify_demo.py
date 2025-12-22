@@ -107,7 +107,7 @@ st.subheader("Interactive Predictor")
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    tempo_input = st.slider("🎵 Tempo (BPM)", 60, 200, 120, 5)
+    tempo_input = st.slider("🎵 Tempo (BPM)", 50, 200, 120, 1)
     st.metric("Selected", f"{tempo_input} BPM")
 
 with col2:
@@ -162,4 +162,5 @@ st.success("""
 # ====================
 st.markdown("---")
 st.caption("AMTH 222 Linear Algebra Project | Analysis of Spotify's Top 30 Streamed Songs")
+
 

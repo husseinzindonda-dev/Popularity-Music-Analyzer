@@ -2,176 +2,248 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 from sklearn.linear_model import LinearRegression
 
-# Clean, minimalist design
+# Dark mode Spotify theme
 st.set_page_config(
-    page_title="Spotify Analytics",
-    page_icon="📊",
-    layout="wide"
+    page_title="Spotify Analytics Lab",
+    page_icon="🎶",
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
-# Minimal CSS
+# Spotify dark theme CSS
 st.markdown("""
 <style>
+    /* Spotify dark theme */
     .stApp {
-        background: #f8f9fa;
+        background: #191414;
+        color: #FFFFFF;
     }
-    .main-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-    .section {
-        background: white;
-        border-radius: 10px;
+    
+    /* Custom containers */
+    .spotify-card {
+        background: #212121;
+        border-radius: 12px;
         padding: 25px;
-        margin: 20px 0;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        margin: 15px 0;
         border-left: 4px solid #1DB954;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     }
-    .metric-box {
+    
+    /* Metrics in Spotify style */
+    .spotify-metric {
+        background: #121212;
+        padding: 20px;
+        border-radius: 10px;
         text-align: center;
-        padding: 15px;
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        background: white;
+        border: 1px solid #535353;
     }
-    h2 {
+    
+    /* Headers with Spotify green */
+    h1, h2, h3 {
         color: #1DB954;
-        border-bottom: 2px solid #f0f0f0;
-        padding-bottom: 10px;
-        margin-bottom: 20px;
+        font-weight: 700;
+    }
+    
+    /* Sliders styled */
+    .stSlider > div > div > div {
+        background: #1DB954 !important;
+    }
+    
+    /* Tabs dark theme */
+    .stTabs [data-baseweb="tab-list"] {
+        background: #212121;
+        border-radius: 8px;
+        padding: 5px;
+    }
+    
+    .stTabs [data-baseweb="tab"] {
+        color: #B3B3B3;
+        padding: 10px 24px;
+    }
+    
+    .stTabs [aria-selected="true"] {
+        background: #1DB954;
+        color: white !important;
+        border-radius: 6px;
+    }
+    
+    /* Dataframe styling */
+    .dataframe {
+        background: #212121 !important;
+        color: white !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Header
-st.markdown("""
-<div class="main-container">
-    <h1 style="text-align: center; color: #1DB954;">🎵 Spotify Stream Predictor</h1>
-    <p style="text-align: center; color: #666; font-size: 1.1em;">
-        Linear Algebra Analysis of Music Features | AMTH 222 Project
-    </p>
-""", unsafe_allow_html=True)
+# HEADER
+col1, col2, col3 = st.columns([2, 1, 1])
+with col1:
+    st.markdown("# 🎵 Spotify Analytics Lab")
+    st.markdown("### Linear Algebra Music Analysis")
+with col2:
+    st.image("https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg", width=80)
+with col3:
+    st.markdown("### AMTH 222")
+    st.markdown("*Hussein Zindonda*")
 
 # Dataset
 data = {
     'Tempo': [90, 140, 130, 95, 145, 115, 171, 120, 110, 135, 75, 120, 154, 140, 130, 100, 90, 78, 117, 150],
-    'Danceability': [75, 60, 70, 65, 68, 72, 80, 55, 58, 62, 78, 72, 65, 70, 68, 55, 82, 75, 85, 73],
-    'Acousticness': [25, 15, 10, 30, 20, 8, 5, 60, 45, 18, 2, 35, 8, 12, 15, 40, 25, 10, 5, 18],
-    'Loudness': [-5, -6, -4, -7, -3, -5, -4, -8, -7, -6, -3, -6, -4, -5, -5, -7, -6, -4, -5, -4],
-    'Duration': [158, 239, 182, 292, 218, 243, 200, 119, 166, 165, 177, 215, 312, 145, 220, 223, 238, 199, 196, 213],
-    'Energy': [75, 85, 80, 70, 90, 88, 85, 65, 78, 82, 92, 68, 95, 87, 83, 72, 60, 80, 89, 77],
-    'Valence': [65, 45, 55, 70, 60, 58, 40, 25, 35, 48, 68, 72, 62, 75, 52, 38, 80, 85, 78, 65],
+    'Dance': [75, 60, 70, 65, 68, 72, 80, 55, 58, 62, 78, 72, 65, 70, 68, 55, 82, 75, 85, 73],
+    'Acoustic': [25, 15, 10, 30, 20, 8, 5, 60, 45, 18, 2, 35, 8, 12, 15, 40, 25, 10, 5, 18],
     'Streams': [2.8, 2.1, 1.8, 1.5, 2.3, 1.7, 3.5, 1.4, 1.9, 1.2, 1.8, 2.4, 1.9, 1.5, 1.6, 1.3, 2.9, 2.5, 2.1, 1.7]
 }
-df = pd.DataFrame(data) * 1e9  # Convert to actual streams
+df = pd.DataFrame(data)
 
-# SECTION 1: Input Controls
-st.markdown('<div class="section">', unsafe_allow_html=True)
-st.markdown("### 🎛️ Configure Song Features")
+# MAIN CONTENT
+st.markdown('<div class="spotify-card">', unsafe_allow_html=True)
 
-cols = st.columns(7)
-features = {}
-with cols[0]:
-    features['tempo'] = st.slider("Tempo", 60, 200, 120)
-    st.caption("BPM")
-with cols[1]:
-    features['danceability'] = st.slider("Dance", 0, 100, 70)
-    st.caption("/100")
-with cols[2]:
-    features['acousticness'] = st.slider("Acoustic", 0, 100, 20)
-    st.caption("/100")
-with cols[3]:
-    features['loudness'] = st.slider("Loudness", -15, 0, -5)
-    st.caption("dB")
-with cols[4]:
-    features['energy'] = st.slider("Energy", 0, 100, 80)
-    st.caption("/100")
-with cols[5]:
-    features['valence'] = st.slider("Valence", 0, 100, 60)
-    st.caption("/100")
-with cols[6]:
-    features['duration'] = st.slider("Duration", 60, 360, 200)
-    st.caption("seconds")
+# SONG BUILDER
+st.markdown("### 🎛️ Create Your Hit Song")
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    tempo = st.slider("**Tempo** (BPM)", 60, 200, 120, 5,
+                     help="Beats per minute - higher = faster")
+    st.progress((tempo-60)/140)
+    
+    dance = st.slider("**Danceability**", 0, 100, 70, 5,
+                     help="How danceable is the track?")
+    st.progress(dance/100)
+
+with col2:
+    acoustic = st.slider("**Acousticness**", 0, 100, 20, 5,
+                        help="Acoustic vs electronic")
+    st.progress(acoustic/100)
+    
+    energy = st.slider("**Energy**", 0, 100, 80, 5,
+                      help="Perceived intensity")
+    st.progress(energy/100)
+
+with col3:
+    valence = st.slider("**Valence**", 0, 100, 60, 5,
+                       help="Musical positivity")
+    st.progress(valence/100)
+    
+    duration = st.slider("**Duration** (sec)", 60, 360, 200, 10,
+                        help="Song length")
+    st.progress((duration-60)/300)
+
 st.markdown('</div>', unsafe_allow_html=True)
 
-# SECTION 2: Predictions
-st.markdown('<div class="section">', unsafe_allow_html=True)
-st.markdown("### 📈 Stream Prediction")
+# PREDICTION SECTION
+st.markdown('<div class="spotify-card">', unsafe_allow_html=True)
+st.markdown("### 📊 Prediction Results")
 
 # Model
-X = df[['Tempo', 'Danceability', 'Acousticness', 'Loudness', 'Energy', 'Valence', 'Duration']]
-y = df['Streams']
+X = df[['Tempo', 'Dance', 'Acoustic']]
+y = df['Streams'] * 1e9
 model = LinearRegression()
 model.fit(X, y)
 
-# Prediction
-input_features = [[features['tempo'], features['danceability'], features['acousticness'],
-                   features['loudness'], features['energy'], features['valence'], features['duration']]]
-prediction = model.predict(input_features)[0]
+prediction = model.predict([[tempo, dance, acoustic]])[0]
+avg_streams = df['Streams'].mean() * 1e9
+difference = ((prediction - avg_streams) / avg_streams * 100)
 
-# Metrics
-col1, col2, col3 = st.columns(3)
+# Metrics in grid
+col1, col2, col3, col4 = st.columns(4)
+
 with col1:
-    st.markdown('<div class="metric-box">', unsafe_allow_html=True)
-    st.metric("Predicted Streams", f"{prediction:,.0f}")
+    st.markdown('<div class="spotify-metric">', unsafe_allow_html=True)
+    st.markdown("##### Predicted Streams")
+    st.markdown(f"## {prediction:,.0f}")
     st.markdown('</div>', unsafe_allow_html=True)
+
 with col2:
-    avg_streams = df['Streams'].mean()
-    difference = ((prediction - avg_streams) / avg_streams * 100)
-    st.markdown('<div class="metric-box">', unsafe_allow_html=True)
-    st.metric("Vs Average", f"{difference:+.1f}%")
+    st.markdown('<div class="spotify-metric">', unsafe_allow_html=True)
+    st.markdown("##### Performance")
+    color = "#1DB954" if difference >= 0 else "#E22134"
+    st.markdown(f'<h2 style="color: {color}">{difference:+.1f}%</h2>', unsafe_allow_html=True)
+    st.markdown("vs Average")
     st.markdown('</div>', unsafe_allow_html=True)
+
 with col3:
-    st.markdown('<div class="metric-box">', unsafe_allow_html=True)
-    st.metric("Model R²", f"{model.score(X, y):.3f}")
+    st.markdown('<div class="spotify-metric">', unsafe_allow_html=True)
+    st.markdown("##### Popularity Score")
+    popularity = max(0, min(100, 50 + (difference / 2)))
+    st.markdown(f"## {popularity:.0f}")
+    st.markdown("/100")
     st.markdown('</div>', unsafe_allow_html=True)
+
+with col4:
+    st.markdown('<div class="spotify-metric">', unsafe_allow_html=True)
+    st.markdown("##### Model Accuracy")
+    r2 = model.score(X, y)
+    st.markdown(f"## {r2:.3f}")
+    st.markdown("R² Score")
+    st.markdown('</div>', unsafe_allow_html=True)
+
 st.markdown('</div>', unsafe_allow_html=True)
 
-# SECTION 3: Visualization
-st.markdown('<div class="section">', unsafe_allow_html=True)
-st.markdown("### 📊 Data Analysis")
+# VISUALIZATION
+st.markdown('<div class="spotify-card">', unsafe_allow_html=True)
+st.markdown("### 📈 Data Visualization")
 
-tab1, tab2 = st.tabs(["Correlations", "Feature Importance"])
+# Correlation heatmap with dark theme
+corr = df.corr()
+fig = px.imshow(corr, 
+               text_auto='.2f',
+               color_continuous_scale='viridis',
+               template="plotly_dark")
+st.plotly_chart(fig, use_container_width=True)
 
-with tab1:
-    corr = df.corr()
-    fig = px.imshow(corr, text_auto='.2f', color_continuous_scale='RdBu')
-    st.plotly_chart(fig, use_container_width=True)
+# 3D Scatter plot
+fig3d = px.scatter_3d(df, 
+                     x='Tempo', 
+                     y='Dance', 
+                     z='Acoustic',
+                     size='Streams',
+                     color='Streams',
+                     hover_name=df.index,
+                     template="plotly_dark",
+                     title="3D Feature Space")
+st.plotly_chart(fig3d, use_container_width=True)
 
-with tab2:
-    importance = pd.DataFrame({
-        'Feature': X.columns,
-        'Coefficient': model.coef_
-    }).sort_values('Coefficient')
-    
-    fig2 = px.bar(importance, x='Coefficient', y='Feature', orientation='h',
-                 color='Coefficient', color_continuous_scale='RdYlGn')
-    st.plotly_chart(fig2, use_container_width=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
-# SECTION 4: Math Details
-with st.expander("Show Linear Algebra Details"):
-    st.markdown("""
-    ### Mathematical Model
-    Multiple linear regression using the normal equation:
+# MATHEMATICAL DETAILS
+with st.expander("🧮 Show Mathematical Foundation", icon="🔢"):
+    st.markdown("### Linear Algebra Implementation")
     
-    $$
-    \\beta = (X^T X)^{-1} X^T y
-    $$
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("**Design Matrix:**")
+        st.latex(r'''
+        X = \begin{bmatrix}
+        x_{11} & x_{12} & x_{13} \\
+        x_{21} & x_{22} & x_{23} \\
+        \vdots & \vdots & \vdots \\
+        x_{20,1} & x_{20,2} & x_{20,3}
+        \end{bmatrix}
+        ''')
     
-    Where:
-    - $X$ is the 20×7 feature matrix
-    - $y$ is the vector of stream counts
-    - $\\beta$ contains the regression coefficients
-    """)
+    with col2:
+        st.markdown("**Normal Equation:**")
+        st.latex(r'''
+        \beta = (X^T X)^{-1} X^T y
+        ''')
+    
+    st.markdown("**Current Model Coefficients:**")
+    coeff_df = pd.DataFrame({
+        'Feature': ['Tempo', 'Danceability', 'Acousticness'],
+        'Coefficient': model.coef_,
+        'Effect': ['Positive' if c > 0 else 'Negative' for c in model.coef_]
+    })
+    st.dataframe(coeff_df)
 
-# Footer
+# FOOTER
 st.markdown("""
-<div style="text-align: center; margin-top: 40px; color: #666; font-size: 0.9em;">
-    <p>AMTH 222 Linear Algebra Project | Hussein Zindonda</p>
-</div>
+<div style="text-align: center; padding: 30px; border-top: 1px solid #535353; margin-top: 40px;">
+    <h4 style="color: #1DB954;">🎵 Spotify Analytics Lab</h4>
+    <p style="color: #B3B3B3;">AMTH 222 Linear Algebra Project | Multiple Regression Analysis</p>
 </div>
 """, unsafe_allow_html=True)

@@ -22,7 +22,7 @@ with st.sidebar:
     st.markdown("**Date:** December 2025")
 
 # ====================
-# HARDCODED DATA (Fix for Streamlit)
+# HARDCODED DATA 
 # ====================
 data = {
     'tempo': [90, 84, 155, 100, 160, 130, 171, 134, 75, 81, 150, 120, 150, 113, 123, 144, 118, 154, 117, 95, 85, 145, 104, 169, 160, 115, 89, 64, 100, 170],
@@ -81,7 +81,7 @@ with col1:
 with col2:
     st.subheader("Dominant Eigenvector")
     st.markdown(f"""
-    **λ = {sorted(eigenvalues, reverse=True)[0]:.3f}** (Largest eigenvalue)
+    **λ  = {sorted(eigenvalues, reverse=True)[0]:.3f}** (Largest eigenvalue)
     
     Direction: {eigenvectors[:,-1].round(3)}
     
@@ -162,3 +162,4 @@ st.success("""
 # ====================
 st.markdown("---")
 st.caption("AMTH 222 Linear Algebra Project | Analysis of Spotify's Top 30 Streamed Songs")
+

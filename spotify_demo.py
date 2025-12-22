@@ -137,7 +137,55 @@ with col_pred2:
     avg_streams = df['streams'].mean()
     difference = ((predicted - avg_streams) / avg_streams * 100)
     st.metric("Vs. Average", f"{difference:+.1f}%")
+# Add this as a new section
+st.markdown("---")
+st.subheader("🎯 How to Read Your Results")
 
+# Create columns for the guide
+col1, col2, col3, col4 = st.columns(4)
+
+with col1:
+    st.markdown("### 🟢 **Hit Potential**")
+    st.markdown("**+10% or more**")
+    st.caption("High danceability (80+)")
+    st.caption("Low acousticness (<0.1)")
+    st.caption("Moderate tempo (120-140)")
+
+with col2:
+    st.markdown("### 🔵 **Average**")
+    st.markdown("**-5% to +5%**")
+    st.caption("Balanced features")
+    st.caption("Typical hit formula")
+    st.caption("Market-ready")
+
+with col3:
+    st.markdown("### 🟡 **Needs Work**")
+    st.markdown("**-5% to -15%**")
+    st.caption("Too acoustic")
+    st.caption("Low danceability")
+    st.caption("Extreme tempo")
+
+with col4:
+    st.markdown("### 🔴 **Unlikely**")
+    st.markdown("**-15% or less**")
+    st.caption("Very acoustic (>0.7)")
+    st.caption("Very low danceability (<40)")
+    st.caption("Niche appeal")
+
+# Show current result with color
+avg_streams = df['streams'].mean()
+difference = ((predicted - avg_streams) / avg_streams * 100)
+
+st.markdown("### Your Current Prediction:")
+
+if difference >= 10:
+    st.success(f"## 🎉 +{difference:.1f}% vs Average - HIT POTENTIAL!")
+elif difference >= -5:
+    st.info(f"## 📊 {difference:+.1f}% vs Average - SOLID PERFORMANCE")
+elif difference >= -15:
+    st.warning(f"## ⚠️ {difference:+.1f}% vs Average - NEEDS IMPROVEMENT")
+else:
+    st.error(f"## ❌ {difference:+.1f}% vs Average - UNLIKELY TO CHART")
 # ====================
 # 4. MODEL PERFORMANCE
 # ====================
@@ -162,6 +210,7 @@ st.success("""
 # ====================
 st.markdown("---")
 st.caption("AMTH 222 Linear Algebra Project | Analysis of Spotify's Top 30 Streamed Songs")
+
 
 
 

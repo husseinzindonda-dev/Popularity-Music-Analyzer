@@ -143,8 +143,8 @@ col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     st.subheader("🎵 Rhythm")
-    tempo = st.slider("Tempo (BPM)", 60, 200, 120, 5)
-    duration = st.slider("Duration (sec)", 60, 360, 200, 10)
+    tempo = st.slider("Tempo (BPM)", 60, 200, 120, 1)
+    duration = st.slider("Duration (sec)", 60, 360, 200, 1)
     
 with col2:
     st.subheader("💃 Feel")
@@ -435,5 +435,6 @@ st.markdown("""
 **Methods Used:** Multiple Linear Regression, Correlation Analysis, PCA, Eigenvector Decomposition  
 **Tools:** NumPy, pandas, scikit-learn, Streamlit
 """)
+
 
 

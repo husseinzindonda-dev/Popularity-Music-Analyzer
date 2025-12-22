@@ -17,7 +17,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Spotify dark theme CSS with new card styling
+# Spotify dark theme CSS
 st.markdown("""
 <style>
     /* Spotify dark theme background */
@@ -49,112 +49,6 @@ st.markdown("""
     .spotify-metric:hover {
         transform: translateY(-3px);
         border-color: #1DB954;
-    }
-    
-    /* NEW: Black prediction card styling */
-    .prediction-card {
-        background: #212121;
-        border-radius: 12px;
-        padding: 25px;
-        margin: 15px 0;
-        border-left: 4px solid #1DB954;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    }
-    
-    .predicted-streams {
-        display: flex;
-        padding: 24px;
-        gap: 24px;
-    }
-    
-    .stream-metric {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-    
-    .metric-label {
-        font-size: 14px;
-        color: #6c757d;
-        font-weight: 500;
-        margin-bottom: 8px;
-    }
-    
-    .comparison-section {
-        margin-bottom: 16px;
-    }
-    
-    .comparison-label {
-        font-size: 12px;
-        color: #adb5bd;
-        margin-bottom: 4px;
-    }
-    
-    .comparison-value {
-        font-size: 14px;
-        color: #28a745;
-        font-weight: 600;
-    }
-    
-    .popularity-section {
-        margin-top: auto;
-    }
-    
-    .popularity-label {
-        font-size: 12px;
-        color: #adb5bd;
-        margin-bottom: 4px;
-    }
-    
-    .popularity-score {
-        font-size: 14px;
-        color: #495057;
-        font-weight: 600;
-    }
-    
-    .stream-count {
-        background: #212529;
-        color: white;
-        padding: 20px;
-        border-radius: 10px;
-        text-align: center;
-        min-width: 180px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-    
-    .stream-number {
-        font-size: 28px;
-        font-weight: 700;
-        line-height: 1.1;
-        margin-bottom: 8px;
-        letter-spacing: -0.5px;
-    }
-    
-    .stream-label {
-        font-size: 13px;
-        color: #adb5bd;
-        margin-bottom: 6px;
-    }
-    
-    .comparison-text {
-        font-size: 11px;
-        color: #868e96;
-        margin-bottom: 8px;
-        letter-spacing: 0.2px;
-    }
-    
-    .rating {
-        font-size: 13px;
-        color: #20c997;
-        font-weight: 600;
-        padding: 4px 8px;
-        background: rgba(32, 201, 151, 0.1);
-        border-radius: 4px;
-        margin-top: 4px;
     }
     
     /* Headers with Spotify green */
@@ -464,12 +358,11 @@ st.table(current_profile)
 st.markdown('</div>', unsafe_allow_html=True)
 
 # ====================
-# 4. PREDICTION ENGINE - UPDATED WITH BLACK CARD
+# 4. PREDICTION ENGINE
 # ====================
-# ====================
-# 4. PREDICTION ENGINE - UPDATED WITH BLACK CARD
-# ====================
-st.markdown('<div class="prediction-card">', unsafe_allow_html=True)
+# Replace your entire prediction section with this:
+
+st.markdown('<div class="spotify-card">', unsafe_allow_html=True)
 st.markdown("## 📊 4. Stream Prediction")
 
 def predict_all_features(tempo, dance, acoustic, loud, energy_val, valence_val, duration_sec):
@@ -485,46 +378,104 @@ prediction = predict_all_features(tempo, danceability, acousticness,
 avg_streams = df['Streams (billions)'].mean() * 1e9
 difference = ((prediction - avg_streams) / avg_streams * 100)
 
-# Estimate popularity based on prediction
-estimated_popularity = 50 + (difference / 2)
-estimated_popularity = max(0, min(100, estimated_popularity))
-rating = "Excellent" if estimated_popularity >= 70 else "Good" if estimated_popularity >= 50 else "Needs Work"
-
-# Display prediction results in the black card layout
+# Display results in Spotify metric cards
 st.markdown("### Prediction Results")
 
-# Format the prediction number with commas
-formatted_prediction = f"{prediction:,.0f}"
-formatted_difference = f"+{difference:.1f}%" if difference >= 0 else f"{difference:.1f}%"
+col_pred1, col_pred2, col_pred3 = st.columns(3)
 
-# Create the HTML for the black card
-prediction_html = f"""
-<div class="predicted-streams">
-    <div class="stream-metric">
-        <div class="metric-label">Predicted Streams</div>
-        
-        <div class="comparison-section">
-            <div class="comparison-label">Vs. Average</div>
-            <div class="comparison-value">{formatted_difference}</div>
-        </div>
-        
-        <div class="popularity-section">
-            <div class="popularity-label">Estimated Popularity</div>
-            <div class="popularity-score">{int(estimated_popularity)}/100</div>
-        </div>
-    </div>
+with col_pred1:
+    st.markdown('<div class="spotify-metric">', unsafe_allow_html=True)
     
-    <div class="stream-count">
-        <div class="stream-number">{formatted_prediction}</div>
-        <div class="stream-label">streams</div>
-        <div class="comparison-text">than average</div>
-        <div class="rating">{rating}</div>
+    # Predicted Streams in text bar
+    stream_text = f"{prediction:,.0f}"
+    st.markdown("##### 🎯 Predicted Streams")
+    st.markdown(f"""
+    <div style="
+        background: linear-gradient(135deg, #1DB954 0%, #1ED760 100%);
+        color: white;
+        border-radius: 8px;
+        padding: 15px;
+        margin: 10px 0;
+        text-align: center;
+        font-size: 1.6em;
+        font-weight: bold;
+        font-family: 'Courier New', monospace;
+        box-shadow: 0 4px 8px rgba(29, 185, 84, 0.3);
+        border: 2px solid white;
+    ">
+    {stream_text}
     </div>
-</div>
-"""
+    """, unsafe_allow_html=True)
+    
+    st.markdown('<p style="text-align: center; color: #B3B3B3; margin-top: 5px;">streams</p>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
-# Display the black card
-st.markdown(prediction_html, unsafe_allow_html=True)
+with col_pred2:
+    st.markdown('<div class="spotify-metric">', unsafe_allow_html=True)
+    
+    # Vs Average in text bar
+    diff_text = f"{difference:+.1f}%"
+    diff_color = "#1DB954" if difference >= 0 else "#E22134"
+    st.markdown("##### 📈 Vs. Average")
+    st.markdown(f"""
+    <div style="
+        background: {diff_color};
+        color: white;
+        border-radius: 8px;
+        padding: 15px;
+        margin: 10px 0;
+        text-align: center;
+        font-size: 1.6em;
+        font-weight: bold;
+        font-family: 'Courier New', monospace;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        border: 2px solid white;
+    ">
+    {diff_text}
+    </div>
+    """, unsafe_allow_html=True)
+    
+    performance = "Better" if difference >= 0 else "Worse"
+    st.markdown(f'<p style="text-align: center; color: #B3B3B3; margin-top: 5px;">than average</p>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with col_pred3:
+    st.markdown('<div class="spotify-metric">', unsafe_allow_html=True)
+    
+    # Estimated Popularity in text bar
+    estimated_popularity = 50 + (difference / 2)
+    estimated_popularity = max(0, min(100, estimated_popularity))
+    pop_text = f"{estimated_popularity:.0f}"
+    pop_color = "#1DB954" if estimated_popularity >= 70 else "#FFD700" if estimated_popularity >= 50 else "#E22134"
+    
+    st.markdown("##### ⭐ Estimated Popularity")
+    st.markdown(f"""
+    <div style="
+        background: linear-gradient(135deg, {pop_color} 0%, #FFD700 100%);
+        color: white;
+        border-radius: 8px;
+        padding: 15px;
+        margin: 10px 0;
+        text-align: center;
+        font-size: 1.6em;
+        font-weight: bold;
+        font-family: 'Courier New', monospace;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        border: 2px solid white;
+    ">
+    {pop_text}/100
+    </div>
+    """, unsafe_allow_html=True)
+    
+    if estimated_popularity >= 70:
+        rating = "Excellent"
+    elif estimated_popularity >= 50:
+        rating = "Good"
+    else:
+        rating = "Needs Work"
+    
+    st.markdown(f'<p style="text-align: center; color: #B3B3B3; margin-top: 5px;">{rating}</p>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
 
@@ -786,4 +737,3 @@ st.markdown("""
     <p style="color: #B3B3B3;"><strong>Methods:</strong> Multiple Linear Regression • Correlation Analysis • PCA • Eigenvector Decomposition</p>
 </div>
 """, unsafe_allow_html=True)
-

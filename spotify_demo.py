@@ -29,7 +29,7 @@ st.markdown("""
     
     /* Metric cards styling */
     div[data-testid="metric-container"] {
-        background-color: #f0f2f6;
+        background-color: #383B39;
         padding: 15px;
         border-radius: 10px;
         border-left: 4px solid #1DB954;
@@ -530,3 +530,4 @@ st.markdown("""
     <p><strong>Dataset:</strong> Top 20 Spotify Songs with 11 Audio Features</p>
 </div>
 """, unsafe_allow_html=True)
+

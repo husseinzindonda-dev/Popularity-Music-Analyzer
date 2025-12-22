@@ -78,7 +78,7 @@ st.markdown("""
     /* Custom metric styling */
     .custom-metric {
         background: linear-gradient(135deg, #1DB954, #1ED760);
-        color: white;
+        color: #383B39;
         padding: 20px;
         border-radius: 10px;
         text-align: center;
@@ -530,4 +530,5 @@ st.markdown("""
     <p><strong>Dataset:</strong> Top 20 Spotify Songs with 11 Audio Features</p>
 </div>
 """, unsafe_allow_html=True)
+
 

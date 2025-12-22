@@ -1,7 +1,4 @@
-import streamlit as st
-import numpy as np
-import pandas as pd
-impo# streamlit_app.py
+# streamlit_app.py
 import streamlit as st
 import numpy as np
 import pandas as pd
@@ -667,3 +664,4 @@ st.markdown("""
     <p style="color: #B3B3B3;"><strong>Methods:</strong> Multiple Linear Regression • Correlation Analysis • PCA • Eigenvector Decomposition</p>
 </div>
 """, unsafe_allow_html=True)
+

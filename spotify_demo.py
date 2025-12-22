@@ -337,31 +337,48 @@ st.header("🧮 9. Linear Algebra Behind the Model")
 st.markdown("""
 **Mathematical Foundation:**
 
-1. **Matrix Formulation:**
-   \[
-   X = \begin{bmatrix}
-   \text{Tempo}_1 & \text{Danceability}_1 & \cdots & \text{Duration}_1 \\
-   \text{Tempo}_2 & \text{Danceability}_2 & \cdots & \text{Duration}_2 \\
-   \vdots & \vdots & \ddots & \vdots \\
-   \text{Tempo}_{20} & \text{Danceability}_{20} & \cdots & \text{Duration}_{20}
-   \end{bmatrix}
-   \]
-   \[
-   y = \begin{bmatrix}
-   \text{Streams}_1 \\
-   \text{Streams}_2 \\
-   \vdots \\
-   \text{Streams}_{20}
-   \end{bmatrix}
-   \]
+### 1. **Matrix Formulation:**
+Our dataset is represented as matrices:
+""")
 
-2. **Normal Equation Solution:**
-   \[
-   \beta = (X^T X)^{-1} X^T y
-   \]
+st.latex(r'''
+X = \begin{bmatrix}
+\text{Tempo}_1 & \text{Danceability}_1 & \cdots & \text{Duration}_1 \\
+\text{Tempo}_2 & \text{Danceability}_2 & \cdots & \text{Duration}_2 \\
+\vdots & \vdots & \ddots & \vdots \\
+\text{Tempo}_{20} & \text{Danceability}_{20} & \cdots & \text{Duration}_{20}
+\end{bmatrix}
+''')
 
-3. **Eigenvector Analysis:**
-   The covariance matrix \(C = X^T X\) reveals feature relationships through its eigenvectors.
+st.latex(r'''
+y = \begin{bmatrix}
+\text{Streams}_1 \\
+\text{Streams}_2 \\
+\vdots \\
+\text{Streams}_{20}
+\end{bmatrix}
+''')
+
+st.markdown("""
+### 2. **Normal Equation Solution:**
+We solve for the coefficient vector β using:
+""")
+
+st.latex(r'''
+\beta = (X^T X)^{-1} X^T y
+''')
+
+st.markdown("""
+### 3. **Eigenvector Analysis:**
+The covariance matrix reveals feature relationships:
+""")
+
+st.latex(r'''
+C = X^T X
+''')
+
+st.markdown("""
+The eigenvectors of C show the principal directions of variation in our data.
 """)
 
 # Calculate eigenvectors of the covariance matrix
@@ -369,11 +386,45 @@ X_scaled = StandardScaler().fit_transform(X)
 cov_matrix = np.cov(X_scaled.T)
 eigenvalues, eigenvectors = np.linalg.eigh(cov_matrix)
 
+# Sort eigenvalues and eigenvectors
+idx = eigenvalues.argsort()[::-1]
+eigenvalues = eigenvalues[idx]
+eigenvectors = eigenvectors[:, idx]
+
 st.markdown(f"""
-**Key Eigenvector Insights:**
-- **First eigenvector** explains **{eigenvalues[-1]/sum(eigenvalues)*100:.1f}%** of variance
-- **Top 3 eigenvectors** explain **{sum(eigenvalues[-3:])/sum(eigenvalues)*100:.1f}%** of variance
-- **Main pattern:** Danceability and Energy move together, opposite to Acousticness
+### 4. **Principal Components:**
+From our eigen decomposition:
+- **First PC** explains **{eigenvalues[0]/sum(eigenvalues)*100:.1f}%** of variance
+- **Second PC** explains **{eigenvalues[1]/sum(eigenvalues)*100:.1f}%** of variance
+- **Top 3 PCs** explain **{sum(eigenvalues[:3])/sum(eigenvalues)*100:.1f}%** of total variance
+""")
+
+# Display top eigenvectors
+st.markdown("**Top 2 Eigenvectors (Principal Components):**")
+
+col_eig1, col_eig2 = st.columns(2)
+
+with col_eig1:
+    st.markdown("**PC1 - Main Pattern:**")
+    pc1_df = pd.DataFrame({
+        'Feature': X_features,
+        'Loading': eigenvectors[:, 0]
+    }).sort_values('Loading', key=abs, ascending=False)
+    st.dataframe(pc1_df.head(5))
+
+with col_eig2:
+    st.markdown("**PC2 - Secondary Pattern:**")
+    pc2_df = pd.DataFrame({
+        'Feature': X_features,
+        'Loading': eigenvectors[:, 1]
+    }).sort_values('Loading', key=abs, ascending=False)
+    st.dataframe(pc2_df.head(5))
+
+st.markdown("""
+### 5. **Interpretation:**
+- **Positive loadings** indicate features that increase together
+- **Negative loadings** indicate inverse relationships
+- **Large absolute values** show strong influence on that principal direction
 """)
 
 # ====================
@@ -386,3 +437,4 @@ st.markdown("""
 **Methods Used:** Multiple Linear Regression, Correlation Analysis, PCA, Eigenvector Decomposition  
 **Tools:** NumPy, pandas, scikit-learn, Streamlit
 """)
+

@@ -360,6 +360,8 @@ st.markdown('</div>', unsafe_allow_html=True)
 # ====================
 # 4. PREDICTION ENGINE
 # ====================
+# Replace your entire prediction section with this:
+
 st.markdown('<div class="spotify-card">', unsafe_allow_html=True)
 st.markdown("## 📊 4. Stream Prediction")
 
@@ -383,25 +385,96 @@ col_pred1, col_pred2, col_pred3 = st.columns(3)
 
 with col_pred1:
     st.markdown('<div class="spotify-metric">', unsafe_allow_html=True)
+    
+    # Predicted Streams in text bar
+    stream_text = f"{prediction:,.0f}"
     st.markdown("##### 🎯 Predicted Streams")
-    st.markdown(f"# {prediction:,.0f}")
+    st.markdown(f"""
+    <div style="
+        background: linear-gradient(135deg, #1DB954 0%, #1ED760 100%);
+        color: white;
+        border-radius: 8px;
+        padding: 15px;
+        margin: 10px 0;
+        text-align: center;
+        font-size: 1.6em;
+        font-weight: bold;
+        font-family: 'Courier New', monospace;
+        box-shadow: 0 4px 8px rgba(29, 185, 84, 0.3);
+        border: 2px solid white;
+    ">
+    {stream_text}
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown('<p style="text-align: center; color: #B3B3B3; margin-top: 5px;">streams</p>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col_pred2:
     st.markdown('<div class="spotify-metric">', unsafe_allow_html=True)
+    
+    # Vs Average in text bar
+    diff_text = f"{difference:+.1f}%"
+    diff_color = "#1DB954" if difference >= 0 else "#E22134"
     st.markdown("##### 📈 Vs. Average")
-    color = "#1DB954" if difference >= 0 else "#E22134"
-    st.markdown(f'<h1 style="color: {color}">{difference:+.1f}%</h1>', unsafe_allow_html=True)
+    st.markdown(f"""
+    <div style="
+        background: {diff_color};
+        color: white;
+        border-radius: 8px;
+        padding: 15px;
+        margin: 10px 0;
+        text-align: center;
+        font-size: 1.6em;
+        font-weight: bold;
+        font-family: 'Courier New', monospace;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        border: 2px solid white;
+    ">
+    {diff_text}
+    </div>
+    """, unsafe_allow_html=True)
+    
+    performance = "Better" if difference >= 0 else "Worse"
+    st.markdown(f'<p style="text-align: center; color: #B3B3B3; margin-top: 5px;">than average</p>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col_pred3:
-    # Estimate popularity (based on correlation)
+    st.markdown('<div class="spotify-metric">', unsafe_allow_html=True)
+    
+    # Estimated Popularity in text bar
     estimated_popularity = 50 + (difference / 2)
     estimated_popularity = max(0, min(100, estimated_popularity))
-    st.markdown('<div class="spotify-metric">', unsafe_allow_html=True)
+    pop_text = f"{estimated_popularity:.0f}"
+    pop_color = "#1DB954" if estimated_popularity >= 70 else "#FFD700" if estimated_popularity >= 50 else "#E22134"
+    
     st.markdown("##### ⭐ Estimated Popularity")
-    st.markdown(f"# {estimated_popularity:.0f}")
-    st.markdown("/100")
+    st.markdown(f"""
+    <div style="
+        background: linear-gradient(135deg, {pop_color} 0%, #FFD700 100%);
+        color: white;
+        border-radius: 8px;
+        padding: 15px;
+        margin: 10px 0;
+        text-align: center;
+        font-size: 1.6em;
+        font-weight: bold;
+        font-family: 'Courier New', monospace;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        border: 2px solid white;
+    ">
+    {pop_text}/100
+    </div>
+    """, unsafe_allow_html=True)
+    
+    if estimated_popularity >= 70:
+        rating = "Excellent"
+    elif estimated_popularity >= 50:
+        rating = "Good"
+    else:
+        rating = "Needs Work"
+    
+    st.markdown(f'<p style="text-align: center; color: #B3B3B3; margin-top: 5px;">{rating}</p>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
@@ -664,4 +737,5 @@ st.markdown("""
     <p style="color: #B3B3B3;"><strong>Methods:</strong> Multiple Linear Regression • Correlation Analysis • PCA • Eigenvector Decomposition</p>
 </div>
 """, unsafe_allow_html=True)
+
 

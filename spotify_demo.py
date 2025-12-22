@@ -15,10 +15,8 @@ st.subheader("Multi-Feature Linear Algebra Analysis - AMTH 222 Project")
 
 # Sidebar with team info
 with st.sidebar:
-    st.header("👥 Team Info")
-    st.markdown("**Oscar De La Cerda**")
+    st.header("Class Info")
     st.markdown("**Hussein Zindonda**")
-    st.markdown("**Sofia Colorado**")
     st.markdown("---")
     st.markdown("**Course:** AMTH 222")
     st.markdown("**Instructor:** Tamunonye Cheetham-West")
@@ -437,4 +435,5 @@ st.markdown("""
 **Methods Used:** Multiple Linear Regression, Correlation Analysis, PCA, Eigenvector Decomposition  
 **Tools:** NumPy, pandas, scikit-learn, Streamlit
 """)
+
 

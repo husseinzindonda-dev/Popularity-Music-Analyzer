@@ -137,7 +137,7 @@ st.markdown("""
 # SIDEBAR - SPOTIFY STYLE
 # ====================
 with st.sidebar:
-    st.image("https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg", width=80)
+    st.image("https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg", width=50)
     st.markdown("<h2 style='text-align: center; color: #1DB954;'>Spotify Hit Lab</h2>", unsafe_allow_html=True)
     
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
@@ -379,7 +379,7 @@ avg_streams = df['Streams (billions)'].mean() * 1e9
 difference = ((prediction - avg_streams) / avg_streams * 100)
 
 # Display results in Spotify metric cards
-st.markdown("### Prediction Results")
+st.markdown("#### Prediction Results")
 
 col_pred1, col_pred2, col_pred3 = st.columns(3)
 
@@ -737,3 +737,4 @@ st.markdown("""
     <p style="color: #B3B3B3;"><strong>Methods:</strong> Multiple Linear Regression • Correlation Analysis • PCA • Eigenvector Decomposition</p>
 </div>
 """, unsafe_allow_html=True)
+

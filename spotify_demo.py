@@ -466,6 +466,9 @@ st.markdown('</div>', unsafe_allow_html=True)
 # ====================
 # 4. PREDICTION ENGINE - UPDATED WITH BLACK CARD
 # ====================
+# ====================
+# 4. PREDICTION ENGINE - UPDATED WITH BLACK CARD
+# ====================
 st.markdown('<div class="prediction-card">', unsafe_allow_html=True)
 st.markdown("## 📊 4. Stream Prediction")
 
@@ -490,31 +493,38 @@ rating = "Excellent" if estimated_popularity >= 70 else "Good" if estimated_popu
 # Display prediction results in the black card layout
 st.markdown("### Prediction Results")
 
-# Create the prediction display with black card
-st.markdown("""
+# Format the prediction number with commas
+formatted_prediction = f"{prediction:,.0f}"
+formatted_difference = f"+{difference:.1f}%" if difference >= 0 else f"{difference:.1f}%"
+
+# Create the HTML for the black card
+prediction_html = f"""
 <div class="predicted-streams">
     <div class="stream-metric">
         <div class="metric-label">Predicted Streams</div>
         
         <div class="comparison-section">
             <div class="comparison-label">Vs. Average</div>
-            <div class="comparison-value">"""+ f"+{difference:.1f}%" +"""</div>
+            <div class="comparison-value">{formatted_difference}</div>
         </div>
         
         <div class="popularity-section">
             <div class="popularity-label">Estimated Popularity</div>
-            <div class="popularity-score">"""+ f"{int(estimated_popularity)}/100" +"""</div>
+            <div class="popularity-score">{int(estimated_popularity)}/100</div>
         </div>
     </div>
     
     <div class="stream-count">
-        <div class="stream-number">"""+ f"{prediction:,.0f}" +"""</div>
+        <div class="stream-number">{formatted_prediction}</div>
         <div class="stream-label">streams</div>
         <div class="comparison-text">than average</div>
-        <div class="rating">"""+ f"{rating}" +"""</div>
+        <div class="rating">{rating}</div>
     </div>
 </div>
-""", unsafe_allow_html=True)
+"""
+
+# Display the black card
+st.markdown(prediction_html, unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
 
@@ -776,3 +786,4 @@ st.markdown("""
     <p style="color: #B3B3B3;"><strong>Methods:</strong> Multiple Linear Regression • Correlation Analysis • PCA • Eigenvector Decomposition</p>
 </div>
 """, unsafe_allow_html=True)
+

@@ -1,28 +1,28 @@
-## 🎵 The Mathematics of a Hit Song: Spotify Data Analysis
-## 📊 Project Overview
+##  The Mathematics of a Hit Song: Spotify Data Analysis
+##  Project Overview
 An academic project applying linear algebra concepts to analyze Spotify's top-streamed songs. We explore the mathematical relationships between song features (tempo, danceability, acousticness) and popularity (streams) using covariance matrices, eigenvectors, and least squares regression.
 Course: AMTH 222 - Linear Algebra
 Team: Oscar De La Cerda, Hussein Zindonda, Sofia Colorado
 Instructor: Tamunonye Cheetham-West
 Date: December 2025
-## 🎯 Research Questions
+##  Research Questions
 1. Which song features most strongly correlate with popularity among top-charting songs?
 2. Can we predict a song's stream count based on its musical features?
-## 📁 Project Structure
+##  Project Structure
 ```
 spotify-linear-analysis/
 │
-├── 📄 README.md # This file
-├── 📄 AMTH 222 project.docx # Project report
-├── 📄 222_project.py # Python analysis code
-└── 📄 spotify_top30.csv # Dataset (30 songs)
+├──  README.md # This file
+├──  AMTH 222 project.docx # Project report
+├──  222_project.py # Python analysis code
+└──  spotify_top30.csv # Dataset (30 songs)
 ```
-## 🔍 Key Findings
-### 📈 Feature Correlation Analysis
+##  Key Findings
+###  Feature Correlation Analysis
 - Strongest Pattern (λ = 1.402): Negative correlation between danceability and acousticness
 - Secondary Pattern (λ = 1.095): Tempo varies independently across top songs
 - Insight: Popular songs tend to be either danceable OR acoustic, rarely both
-### 🤖 Stream Prediction Model
+###  Stream Prediction Model
 Regression Equation:
 ```
 Predicted Streams = 710,387,065.02
@@ -33,7 +33,7 @@ Predicted Streams = 710,387,065.02
 Model Performance:
 - Tested on Drake's "One Dance": Predicted vs Actual error ≈ 24%
 - Key predictor: Acousticness (largest coefficient magnitude)
-## 📊 Data Source
+##  Data Source
 Dataset: Spotify Top 10000 Streamed Songs
 Sample Size: Top 20 songs from the dataset
 Features Used:
@@ -41,7 +41,7 @@ Features Used:
 - streams (total plays on Spotify)
 - danceability (0-100 scale)
 - acousticness (0-1 scale)
-## 🧮 Mathematical Methods
+##  Mathematical Methods
 ### 1. Correlation Analysis
 - Tool: Principal Component Analysis (PCA)
 - Process:
@@ -54,7 +54,7 @@ Features Used:
 - Method: Least Squares via Normal Equation
 - Equation: (XᵀX)β = Xᵀy
 - Implementation: Both direct matrix inversion and scikit-learn's QR decomposition
-## 📈 Results Summary
+##  Results Summary
 | Analysis Type | Key Insight | Mathematical Tool |
 |--------------|-------------|-------------------|
 | Feature Correlation | Danceability & acousticness are inversely related | Eigenvectors of covariance matrix |
@@ -70,30 +70,30 @@ Regression Coefficients:
 - Tempo: -353,581.02 (negative effect)
 - Danceability: -1,229,790.56 (negative effect)
 - Acousticness: -46,423,348.06 (strongest negative effect)
-## 👥 Team Contributions
+##  Team Contributions
 | Team Member | Primary Contribution |
 |-------------|---------------------|
 | Oscar | Regression analysis, mathematical formulation |
 | Hussein | Data processing, covariance matrix implementation |
 | Sofia | Report writing, documentation, project coordination |
 All team members contributed to code development, analysis, and interpretation of results.
-## 📚 References
+##  References
 1. Strang, G. (2016). Introduction to Linear Algebra (5th ed.)
 2. Spotify API Documentation: Audio Features
 3. Kaggle Dataset: Spotify Top 10000 Streamed Songs
 4. Python Libraries: NumPy, scikit-learn
-## 📄 Academic Context
+##  Academic Context
 This project demonstrates practical applications of linear algebra concepts learned in AMTH 222:
 - Covariance matrices for understanding multivariate relationships
 - Eigen decomposition for dimensionality reduction (PCA)
 - Least squares for predictive modeling
 - Matrix operations in Python for computational efficiency
-## 🙏 Acknowledgments
+##  Acknowledgments
 - Tamunonye Cheetham-West for project guidance and instruction
 - Spotify for making streaming data publicly available
 - Kaggle community for dataset curation
 - Python open-source community for scientific computing tools
-## ⚠️ Limitations & Future Work
+##  Limitations & Future Work
 Current Limitations:
 - Small sample size (20 songs)
 - Limited feature set

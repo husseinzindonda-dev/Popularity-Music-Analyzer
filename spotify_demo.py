@@ -150,14 +150,14 @@ with st.sidebar:
     
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
     
-    st.markdown("### 📊 Dataset Info")
+    st.markdown("### Dataset Info")
     st.markdown("**Songs:** 20 Top Hits")
     st.markdown("**Features:** 11 Audio Metrics")
     st.markdown("**Stream Range:** 1.2B - 3.5B")
     
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
     
-    st.markdown("### 🧮 Methods Used")
+    st.markdown("### Methods Used")
     st.markdown("- Multiple Linear Regression")
     st.markdown("- Principal Component Analysis")
     st.markdown("- Eigenvector Decomposition")
@@ -217,7 +217,7 @@ df = pd.DataFrame(data)
 # 1. CORRELATION ANALYSIS
 # ====================
 st.markdown('<div class="spotify-card">', unsafe_allow_html=True)
-st.markdown("## 📈 1. Comprehensive Correlation Analysis")
+st.markdown("## 1. Comprehensive Correlation Analysis")
 
 # Calculate full correlation matrix
 numerical_features = ['Tempo (BPM)', 'Popularity (/100)', 'Streams (billions)', 
@@ -271,7 +271,7 @@ st.markdown('</div>', unsafe_allow_html=True)
 # 2. MULTI-FEATURE LINEAR REGRESSION
 # ====================
 st.markdown('<div class="spotify-card">', unsafe_allow_html=True)
-st.markdown("## 🎯 2. Multi-Feature Stream Prediction Model")
+st.markdown("## 2. Multi-Feature Stream Prediction Model")
 
 # Prepare data for regression
 X_features = ['Tempo (BPM)', 'Danceability (/100)', 'Acousticness (/100)', 
@@ -310,7 +310,7 @@ st.markdown('</div>', unsafe_allow_html=True)
 # 3. INTERACTIVE PREDICTOR WITH ALL FEATURES
 # ====================
 st.markdown('<div class="spotify-card">', unsafe_allow_html=True)
-st.markdown("## 🎛️ 3. Interactive Song Builder")
+st.markdown("## 3. Interactive Song Builder")
 
 st.markdown("**Adjust all features to build your perfect hit song:**")
 
@@ -318,28 +318,28 @@ st.markdown("**Adjust all features to build your perfect hit song:**")
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    st.markdown("### 🎵 Rhythm")
+    st.markdown("### Rhythm")
     tempo = st.slider("Tempo (BPM)", 60, 200, 120, 1)
     st.metric("Selected", f"{tempo} BPM", delta=None)
     duration = st.slider("Duration (sec)", 60, 360, 200, 1)
     st.metric("Selected", f"{duration}s", delta=None)
     
 with col2:
-    st.markdown("### 💃 Feel")
+    st.markdown("### Feel")
     danceability = st.slider("Danceability", 0, 100, 70, 1)
     st.progress(danceability/100)
     valence = st.slider("Valence (Positivity)", 0, 100, 60, 1)
     st.progress(valence/100)
     
 with col3:
-    st.markdown("### 🔊 Sound")
+    st.markdown("### Sound")
     acousticness = st.slider("Acousticness", 0, 100, 20, 1)
     st.progress(acousticness/100)
     loudness = st.slider("Loudness (dB)", -15, 0, -5, 1)
     st.metric("Selected", f"{loudness} dB", delta=None)
     
 with col4:
-    st.markdown("### ⚡ Energy")
+    st.markdown("### Energy")
     energy = st.slider("Energy", 0, 100, 80, 1)
     st.progress(energy/100)
 
@@ -363,7 +363,7 @@ st.markdown('</div>', unsafe_allow_html=True)
 # Replace your entire prediction section with this:
 
 st.markdown('<div class="spotify-card">', unsafe_allow_html=True)
-st.markdown("## 📊 4. Stream Prediction")
+st.markdown("## 4. Stream Prediction")
 
 def predict_all_features(tempo, dance, acoustic, loud, energy_val, valence_val, duration_sec):
     """Predict streams using all features"""
@@ -388,7 +388,7 @@ with col_pred1:
     
     # Predicted Streams in text bar
     stream_text = f"{prediction:,.0f}"
-    st.markdown("##### 🎯 Predicted Streams")
+    st.markdown("##### Predicted Streams")
     st.markdown(f"""
     <div style="
         background: linear-gradient(135deg, #1DB954 0%, #1ED760 100%);
@@ -416,7 +416,7 @@ with col_pred2:
     # Vs Average in text bar
     diff_text = f"{difference:+.1f}%"
     diff_color = "#1DB954" if difference >= 0 else "#E22134"
-    st.markdown("##### 📈 Vs. Average")
+    st.markdown("##### Vs. Average")
     st.markdown(f"""
     <div style="
         background: {diff_color};
@@ -448,7 +448,7 @@ with col_pred3:
     pop_text = f"{estimated_popularity:.0f}"
     pop_color = "#1DB954" if estimated_popularity >= 70 else "#FFD700" if estimated_popularity >= 50 else "#E22134"
     
-    st.markdown("##### ⭐ Estimated Popularity")
+    st.markdown("##### Estimated Popularity")
     st.markdown(f"""
     <div style="
         background: linear-gradient(135deg, {pop_color} 0%, #FFD700 100%);
@@ -483,7 +483,7 @@ st.markdown('</div>', unsafe_allow_html=True)
 # 5. FEATURE IMPORTANCE VISUALIZATION
 # ====================
 st.markdown('<div class="spotify-card">', unsafe_allow_html=True)
-st.markdown("## 📊 5. Feature Impact Analysis")
+st.markdown("## 5. Feature Impact Analysis")
 
 # Create feature importance chart with dark theme
 feature_importance = pd.DataFrame({
@@ -510,7 +510,7 @@ st.markdown('</div>', unsafe_allow_html=True)
 # 6. WHAT-IF SCENARIOS
 # ====================
 st.markdown('<div class="spotify-card">', unsafe_allow_html=True)
-st.markdown("## 🔬 6. What-If Analysis")
+st.markdown("## 6. What-If Analysis")
 
 what_if_col1, what_if_col2, what_if_col3 = st.columns(3)
 
@@ -543,7 +543,7 @@ st.markdown('</div>', unsafe_allow_html=True)
 # 7. OPTIMAL SONG RECOMMENDATION
 # ====================
 st.markdown('<div class="spotify-card">', unsafe_allow_html=True)
-st.markdown("## 🏆 7. Optimal Hit Recipe")
+st.markdown("## 7. Optimal Hit Recipe")
 
 # Calculate optimal values based on model
 optimal_values = {
@@ -629,7 +629,7 @@ st.markdown('</div>', unsafe_allow_html=True)
 # 9. LINEAR ALGEBRA INSIGHTS
 # ====================
 st.markdown('<div class="spotify-card">', unsafe_allow_html=True)
-st.markdown("## 🧮 9. Linear Algebra Behind the Model")
+st.markdown("## 9. Linear Algebra Behind the Model")
 
 st.markdown("""
 **Mathematical Foundation:**
@@ -737,6 +737,7 @@ st.markdown("""
     <p style="color: #B3B3B3;"><strong>Methods:</strong> Multiple Linear Regression • Correlation Analysis • PCA • Eigenvector Decomposition</p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
